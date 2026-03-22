@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>喵茶坊 — 貓咪茶飲專賣</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5ECD7;
+    --tea-brown: #8B5E3C;
+    --deep-brown: #3D2012;
+    --caramel: #C8843A;
+    --warm-gold: #E0A84B;
+    --sage: #7A9E7E;
+    --blush: #E8C4A2;
+    --cat-grey: #8A8075;
+    --ink: #1A0F08;
+    --foam: #FDF6EC;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background-color: var(--cream);
+    color: var(--deep-brown);
+    font-family: 'Noto Serif TC', serif;
+    overflow-x: hidden;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='24'%3E🐾%3C/text%3E%3C/svg%3E") 16 16, auto;
+  }
+
+  /* ── Noise texture overlay ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 999;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 60px 80px 80px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: var(--tea-brown);
+    color: var(--cream);
+    font-size: 11px;
+    letter-spacing: 4px;
+    padding: 6px 16px;
+    border-radius: 2px;
+    margin-bottom: 28px;
+    width: fit-content;
+    text-transform: uppercase;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(52px, 6vw, 88px);
+    line-height: 1.05;
+    color: var(--deep-brown);
+    margin-bottom: 12px;
+  }
+
+  .hero-title .kanji {
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 900;
+    font-size: clamp(40px, 4.5vw, 68px);
+    display: block;
+    color: var(--tea-brown);
+    letter-spacing: 8px;
+  }
+
+  .hero-sub {
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--cat-grey);
+    max-width: 380px;
+    margin: 24px 0 44px;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .btn-primary {
+    background: var(--deep-brown);
+    color: var(--cream);
+    padding: 14px 32px;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 14px;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: all 0.3s;
+    text-decoration: none;
+  }
+
+  .btn-primary:hover {
+    background: var(--tea-brown);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(61,32,18,0.2);
+  }
+
+  .btn-ghost {
+    color: var(--tea-brown);
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-decoration: none;
+    border-bottom: 1px solid var(--caramel);
+    padding-bottom: 2px;
+    transition: all 0.3s;
+  }
+
+  .btn-ghost:hover { color: var(--deep-brown); }
+
+  .hero-right {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .hero-right::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 60% 40%, var(--blush) 0%, var(--cream) 70%);
+  }
+
+  .cat-illustration {
+    position: relative;
+    z-index: 2;
+    animation: float 4s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-16px); }
+  }
+
+  .cat-svg-wrap { filter: drop-shadow(0 20px 40px rgba(139,94,60,0.25)); }
+
+  .deco-circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.15;
+  }
+  .deco-circle.c1 { width: 300px; height: 300px; background: var(--caramel); top: 10%; right: 5%; }
+  .deco-circle.c2 { width: 180px; height: 180px; background: var(--tea-brown); bottom: 20%; left: 5%; }
+
+  .floating-paw {
+    position: absolute;
+    font-size: 24px;
+    opacity: 0.2;
+    animation: drift 6s ease-in-out infinite;
+  }
+  .floating-paw:nth-child(1) { top: 15%; left: 15%; animation-delay: 0s; }
+  .floating-paw:nth-child(2) { top: 70%; right: 20%; animation-delay: 1.5s; }
+  .floating-paw:nth-child(3) { bottom: 15%; left: 30%; animation-delay: 3s; }
+
+  @keyframes drift {
+    0%, 100% { transform: rotate(-10deg) translateY(0); }
+    50% { transform: rotate(10deg) translateY(-12px); }
+  }
+
+  /* ── MENU SECTION ── */
+  .menu-section {
+    padding: 100px 80px;
+    background: var(--foam);
+    position: relative;
+  }
+
+  .section-label {
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--caramel);
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 4vw, 56px);
+    color: var(--deep-brown);
+    margin-bottom: 60px;
+  }
+
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .menu-card {
+    background: white;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 20px rgba(61,32,18,0.07);
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+  }
+
+  .menu-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 48px rgba(61,32,18,0.14);
+  }
+
+  .card-art {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-art.green-tea { background: linear-gradient(135deg, #d4edda, #a8d5b5); }
+  .card-art.milk-tea { background: linear-gradient(135deg, #f3e0c7, #d4a574); }
+  .card-art.matcha { background: linear-gradient(135deg, #c8e6c9, #81c784); }
+  .card-art.oolong { background: linear-gradient(135deg, #ffe0b2, #ffb74d); }
+
+  .card-cat {
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    font-size: 48px;
+    opacity: 0.35;
+    transform: rotate(15deg);
+  }
+
+  .card-body { padding: 24px; }
+
+  .card-name {
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 6px;
+    color: var(--deep-brown);
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--cat-grey);
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .card-price {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--tea-brown);
+  }
+
+  .card-tag {
+    font-size: 11px;
+    background: var(--blush);
+    color: var(--tea-brown);
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+  }
+
+  /* ── CALCULATOR SECTION ── */
+  .calc-section {
+    padding: 100px 80px;
+    background: var(--deep-brown);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .calc-section::before {
+    content: '🐱';
+    position: absolute;
+    font-size: 300px;
+    opacity: 0.04;
+    right: -50px;
+    bottom: -50px;
+    line-height: 1;
+  }
+
+  .calc-inner {
+    max-width: 700px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  .calc-section .section-label { color: var(--caramel); }
+  .calc-section .section-title { color: var(--cream); }
+
+  .calc-form {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 48px;
+    backdrop-filter: blur(10px);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-group label {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--blush);
+  }
+
+  .form-group input,
+  .form-group select {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 4px;
+    padding: 12px 16px;
+    color: var(--cream);
+    font-family: 'Noto Serif TC', serif;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.3s;
+    -webkit-appearance: none;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    border-color: var(--caramel);
+    background: rgba(255,255,255,0.12);
+  }
+
+  .form-group select option { background: var(--deep-brown); color: var(--cream); }
+
+  .calc-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--caramel);
+    color: var(--foam);
+    border: none;
+    border-radius: 4px;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 16px;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 8px;
+  }
+
+  .calc-btn:hover {
+    background: var(--warm-gold);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(200,132,58,0.3);
+  }
+
+  .result-box {
+    margin-top: 32px;
+    padding: 32px;
+    background: var(--cream);
+    border-radius: 6px;
+    text-align: center;
+    display: none;
+    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .result-box.show { display: block; }
+
+  .result-cat { font-size: 48px; margin-bottom: 8px; }
+
+  .result-label {
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: var(--cat-grey);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .result-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 64px;
+    color: var(--tea-brown);
+    line-height: 1;
+  }
+
+  .result-price span { font-size: 28px; vertical-align: super; }
+
+  .result-discounts {
+    margin-top: 16px;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .discount-tag {
+    background: var(--blush);
+    color: var(--tea-brown);
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+  }
+
+  .result-msg {
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--cat-grey);
+    line-height: 1.7;
+  }
+
+  /* ── PROMO BANNER ── */
+  .promo-strip {
+    background: var(--caramel);
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 14px 0;
+  }
+
+  .promo-inner {
+    display: inline-block;
+    animation: marquee 20s linear infinite;
+  }
+
+  .promo-inner span {
+    display: inline-block;
+    margin: 0 40px;
+    color: var(--foam);
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    color: rgba(245,236,215,0.5);
+    text-align: center;
+    padding: 40px;
+    font-size: 13px;
+    letter-spacing: 2px;
+  }
+
+  footer strong { color: var(--blush); }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; min-height: auto; }
+    .hero-right { height: 300px; }
+    .hero-left { padding: 60px 32px; }
+    .menu-section, .calc-section { padding: 60px 24px; }
+    .form-row { grid-template-columns: 1fr; }
+    .calc-form { padding: 28px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-badge">喵喵 × 茶飲 · Since 2025</div>
+    <h1 class="hero-title">
+      <span class="kanji">喵茶坊</span>
+      Cat Tea<br>House
+    </h1>
+    <p class="hero-sub">
+      每一杯茶都有一隻貓咪在等待你。<br>
+      精選茶葉，溫柔沖泡，<br>讓喵星人陪你度過每個悠閒時光。
+    </p>
+    <div class="hero-cta">
+      <a href="#menu" class="btn-primary">查看菜單</a>
+      <a href="#discount" class="btn-ghost">計算優惠 →</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="deco-circle c1"></div>
+    <div class="deco-circle c2"></div>
+    <div class="floating-paw">🐾</div>
+    <div class="floating-paw">🐾</div>
+    <div class="floating-paw">🐾</div>
+    <div class="cat-illustration">
+      <div class="cat-svg-wrap">
+        <svg width="320" height="380" viewBox="0 0 320 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Tea cup -->
+          <ellipse cx="160" cy="300" rx="90" ry="18" fill="#C8843A" opacity="0.3"/>
+          <rect x="85" y="220" width="150" height="90" rx="12" fill="#8B5E3C"/>
+          <rect x="235" y="240" width="30" height="40" rx="15" fill="none" stroke="#8B5E3C" stroke-width="8"/>
+          <ellipse cx="160" cy="220" rx="75" ry="16" fill="#C8843A"/>
+          <!-- Steam -->
+          <path d="M130 200 Q135 185 130 170 Q125 155 130 140" stroke="#E8C4A2" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.6">
+            <animate attributeName="d" values="M130 200 Q135 185 130 170 Q125 155 130 140;M130 200 Q125 185 130 170 Q135 155 130 140;M130 200 Q135 185 130 170 Q125 155 130 140" dur="2s" repeatCount="indefinite"/>
+          </path>
+          <path d="M160 195 Q165 180 160 165 Q155 150 160 135" stroke="#E8C4A2" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.6">
+            <animate attributeName="d" values="M160 195 Q165 180 160 165 Q155 150 160 135;M160 195 Q155 180 160 165 Q165 150 160 135;M160 195 Q165 180 160 165 Q155 150 160 135" dur="2.5s" repeatCount="indefinite"/>
+          </path>
+          <path d="M190 200 Q195 185 190 170 Q185 155 190 140" stroke="#E8C4A2" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.6">
+            <animate attributeName="d" values="M190 200 Q195 185 190 170 Q185 155 190 140;M190 200 Q185 185 190 170 Q195 155 190 140;M190 200 Q195 185 190 170 Q185 155 190 140" dur="1.8s" repeatCount="indefinite"/>
+          </path>
+          <!-- Cat body -->
+          <ellipse cx="160" cy="145" rx="70" ry="75" fill="#D4B896"/>
+          <!-- Cat head -->
+          <ellipse cx="160" cy="80" rx="62" ry="58" fill="#D4B896"/>
+          <!-- Cat ears -->
+          <polygon points="110,44 90,10 130,38" fill="#D4B896"/>
+          <polygon points="210,44 230,10 190,38" fill="#D4B896"/>
+          <!-- Inner ears -->
+          <polygon points="110,40 97,20 124,37" fill="#E8B4A0"/>
+          <polygon points="210,40 223,20 196,37" fill="#E8B4A0"/>
+          <!-- Cat face -->
+          <!-- Eyes -->
+          <ellipse cx="140" cy="78" rx="12" ry="10" fill="#3D2012"/>
+          <ellipse cx="180" cy="78" rx="12" ry="10" fill="#3D2012"/>
+          <!-- Eye shine -->
+          <circle cx="144" cy="74" r="4" fill="white"/>
+          <circle cx="184" cy="74" r="4" fill="white"/>
+          <!-- Nose -->
+          <ellipse cx="160" cy="94" rx="6" ry="4" fill="#E8B4A0"/>
+          <!-- Mouth -->
+          <path d="M154 98 Q160 104 166 98" stroke="#8B5E3C" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <!-- Whiskers -->
+          <line x1="100" y1="90" x2="145" y2="94" stroke="#8B5E3C" stroke-width="1.5" opacity="0.5"/>
+          <line x1="100" y1="98" x2="145" y2="97" stroke="#8B5E3C" stroke-width="1.5" opacity="0.5"/>
+          <line x1="175" y1="94" x2="220" y2="90" stroke="#8B5E3C" stroke-width="1.5" opacity="0.5"/>
+          <line x1="175" y1="97" x2="220" y2="98" stroke="#8B5E3C" stroke-width="1.5" opacity="0.5"/>
+          <!-- Paws on cup -->
+          <ellipse cx="105" cy="215" rx="22" ry="16" fill="#D4B896"/>
+          <ellipse cx="215" cy="215" rx="22" ry="16" fill="#D4B896"/>
+          <!-- Paw toes -->
+          <circle cx="97" cy="210" r="5" fill="#C4A088"/>
+          <circle cx="105" cy="207" r="5" fill="#C4A088"/>
+          <circle cx="113" cy="210" r="5" fill="#C4A088"/>
+          <circle cx="207" cy="210" r="5" fill="#C4A088"/>
+          <circle cx="215" cy="207" r="5" fill="#C4A088"/>
+          <circle cx="223" cy="210" r="5" fill="#C4A088"/>
+          <!-- Tail -->
+          <path d="M230 180 Q270 160 260 200 Q250 230 230 220" stroke="#D4B896" stroke-width="16" fill="none" stroke-linecap="round"/>
+          <!-- Tea label on cup -->
+          <text x="160" y="268" text-anchor="middle" font-family="serif" font-size="14" fill="#F5ECD7" font-weight="bold">喵 茶</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROMO STRIP -->
+<div class="promo-strip">
+  <div class="promo-inner">
+    <span>🐾 早餐時段 07–10 點折 5 元</span>
+    <span>🍵 下午茶 14–16 點折 5 元</span>
+    <span>🌡️ 氣溫 30°C 以上 冰飲折 5 元</span>
+    <span>❄️ 氣溫 15°C 以下 熱飲折 5 元</span>
+    <span>🐱 喵茶坊歡迎你</span>
+    <span>🐾 早餐時段 07–10 點折 5 元</span>
+    <span>🍵 下午茶 14–16 點折 5 元</span>
+    <span>🌡️ 氣溫 30°C 以上 冰飲折 5 元</span>
+    <span>❄️ 氣溫 15°C 以下 熱飲折 5 元</span>
+    <span>🐱 喵茶坊歡迎你</span>
+  </div>
+</div>
+
+<!-- MENU -->
+<section class="menu-section" id="menu">
+  <p class="section-label">Our Signature Drinks</p>
+  <h2 class="section-title">喵咪特選茶飲</h2>
+  <div class="menu-grid">
+    <div class="menu-card">
+      <div class="card-art green-tea">🍵<div class="card-cat">😸</div></div>
+      <div class="card-body">
+        <div class="card-name">虎斑綠茶</div>
+        <p class="card-desc">清香嫩芽，如同橘貓般溫暖。每日新鮮沖泡，淡雅回甘。</p>
+        <div class="card-footer">
+          <div class="card-price">$45</div>
+          <div class="card-tag">冰 · 熱</div>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="card-art milk-tea">🥛<div class="card-cat">🐈</div></div>
+      <div class="card-body">
+        <div class="card-name">波斯奶茶</div>
+        <p class="card-desc">絲滑鮮奶，醇厚錫蘭紅茶。貴氣優雅，如同波斯貓的氣息。</p>
+        <div class="card-footer">
+          <div class="card-price">$55</div>
+          <div class="card-tag">冰 · 熱</div>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="card-art matcha">🍃<div class="card-cat">🐱</div></div>
+      <div class="card-body">
+        <div class="card-name">黑貓抹茶拿鐵</div>
+        <p class="card-desc">濃郁宇治抹茶遇上燕麥奶，深邃如黑貓神祕眼眸。</p>
+        <div class="card-footer">
+          <div class="card-price">$65</div>
+          <div class="card-tag">冰 · 熱</div>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card">
+      <div class="card-art oolong">🌿<div class="card-cat">😺</div></div>
+      <div class="card-body">
+        <div class="card-name">金毛烏龍蜜</div>
+        <p class="card-desc">蜜香東方美人，如同金色緬因貓般高貴。帶有天然果香。</p>
+        <div class="card-footer">
+          <div class="card-price">$60</div>
+          <div class="card-tag">冰 · 熱</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DISCOUNT CALCULATOR -->
+<section class="calc-section" id="discount">
+  <div class="calc-inner">
+    <p class="section-label">Special Offers</p>
+    <h2 class="section-title">喵喵優惠計算</h2>
+    <div class="calc-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>飲料原價（元）</label>
+          <input type="number" id="price" placeholder="例：50" min="20" max="100" value="">
+        </div>
+        <div class="form-group">
+          <label>當前氣溫（°C）</label>
+          <input type="number" id="temp" placeholder="例：30" min="-40" max="50" value="">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>時段（24 小時制）</label>
+          <input type="number" id="hour" placeholder="例：8" min="0" max="23" value="">
+        </div>
+        <div class="form-group">
+          <label>飲料類型</label>
+          <select id="drink-type">
+            <option value="">請選擇...</option>
+            <option value="0">🧊 冰飲</option>
+            <option value="1">♨️ 熱飲</option>
+          </select>
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calculate()">🐾 計算喵喵優惠</button>
+    </div>
+    <div class="result-box" id="result">
+      <div class="result-cat" id="result-cat">😸</div>
+      <div class="result-label">折扣後價格</div>
+      <div class="result-price" id="result-price"><span>$</span>—</div>
+      <div class="result-discounts" id="discount-tags"></div>
+      <p class="result-msg" id="result-msg"></p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>🐾 <strong>喵茶坊</strong> — 貓咪陪你喝好茶</p>
+  <p style="margin-top:8px;font-size:11px;opacity:0.5">TOIP 2025 Tea Problem × Cat Tea House Fan Design</p>
+</footer>
+
+<script>
+function calculate() {
+  const P = parseInt(document.getElementById('price').value);
+  const D = parseInt(document.getElementById('temp').value);
+  const T = parseInt(document.getElementById('hour').value);
+  const C = document.getElementById('drink-type').value;
+
+  // Validation
+  if (isNaN(P) || isNaN(D) || isNaN(T) || C === '') {
+    alert('🐱 請填寫所有欄位哦！');
+    return;
+  }
+  if (P < 20 || P > 100) { alert('🐱 原價需介於 20 到 100 元之間！'); return; }
+  if (D < -40 || D > 50) { alert('🐱 氣溫需介於 -40 到 50 度之間！'); return; }
+  if (T < 0 || T > 23) { alert('🐱 時段需介於 0 到 23 之間！'); return; }
+
+  const isIce = C === '0';
+  const isHot = C === '1';
+  let discount = 0;
+  const tags = [];
+  let msgs = [];
+
+  // Temp discount
+  if (D >= 30 && isIce) {
+    discount += 5;
+    tags.push('🌡️ 熱天冰飲 −5元');
+    msgs.push('天氣好熱，冰飲享折扣！');
+  }
+  if (D <= 15 && isHot) {
+    discount += 5;
+    tags.push('❄️ 涼天熱飲 −5元');
+    msgs.push('天氣涼涼的，熱飲暖身！');
+  }
+
+  // Time discount
+  if ((T >= 7 && T < 10) || (T >= 14 && T < 16)) {
+    discount += 5;
+    if (T >= 7 && T < 10) {
+      tags.push('🌅 早餐優惠 −5元');
+      msgs.push('早安！早餐時段享有折扣。');
+    } else {
+      tags.push('☕ 下午茶優惠 −5元');
+      msgs.push('下午茶時間到！享有折扣。');
+    }
+  }
+
+  const finalPrice = P - discount;
+
+  // Update UI
+  const resultBox = document.getElementById('result');
+  const resultPrice = document.getElementById('result-price');
+  const discountTags = document.getElementById('discount-tags');
+  const resultMsg = document.getElementById('result-msg');
+  const resultCat = document.getElementById('result-cat');
+
+  resultPrice.innerHTML = `<span>$</span>${finalPrice}`;
+
+  discountTags.innerHTML = '';
+  if (tags.length === 0) {
+    discountTags.innerHTML = '<span class="discount-tag">無折扣</span>';
+    resultCat.textContent = '🐱';
+    resultMsg.textContent = '目前沒有適用的優惠，但每杯茶都有貓咪的祝福 ♡';
+  } else {
+    tags.forEach(t => {
+      const tag = document.createElement('span');
+      tag.className = 'discount-tag';
+      tag.textContent = t;
+      discountTags.appendChild(tag);
+    });
+    resultCat.textContent = '😸';
+    resultMsg.textContent = msgs.join(' ') + ` 共折 ${discount} 元，原價 $${P} → $${finalPrice}！`;
+  }
+
+  resultBox.classList.remove('show');
+  void resultBox.offsetWidth;
+  resultBox.classList.add('show');
+}
+
+// Allow Enter key
+document.addEventListener('keypress', e => {
+  if (e.key === 'Enter') calculate();
+});
+</script>
+</body>
+</html>
